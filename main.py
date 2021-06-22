@@ -44,7 +44,7 @@ else:
 #Define Bot
 bot = commands.Bot(command_prefix=config.prefix, case_insensitive=True)
 
-#Ładowanie cogów
+#Load cogs
 for filename in os.listdir('./cogs'):
     filename1 = filename
     if filename.endswith('.py'):
@@ -66,8 +66,37 @@ async def on_command_error(ctx, error):
         return
     raise error
 
+
+############ Commands that cant be in classes because im too fucking dumb
 @bot.command()
 async def ping(ctx):
     await ctx.send("PONG!")
+
+@bot.command()
+async def china(ctx):
+    china = bot.get_emoji(856862263825924136)
+    await ctx.send(f"{china}")
+    print(f"{ctx.author.name}#{ctx.author.discriminator} issued .china on {ctx.author.guild.name}")
+
+@bot.command()
+async def uto(ctx):
+    utopray = bot.get_emoji(856842821428707358)
+    await ctx.send(f"Praise be uto {utopray}")
+
+@bot.command()
+async def send_dm(ctx, member: discord.Member, y=15, *, content):
+    role = discord.utils.get(ctx.guild.roles, name="Ascended")
+    if role not in ctx.author.roles:
+        await ctx.send(f'No perms, you need to be Ascended')
+    if str(ctx.author.id) == "215024255526633482":
+        return
+    x = 0
+    if y > 15 or y <= 0:
+        return await ctx.send("You fucked up")
+    channel = await member.create_dm()
+    print(f"{ctx.author.name}#{ctx.author.discriminator} to {member.name}#{member.discriminator} {y} {content}")
+    while x != y:
+        await channel.send(content)
+        x += 1
 
 bot.run(config.token)

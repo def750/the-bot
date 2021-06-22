@@ -1,4 +1,5 @@
 import discord
+from discord import embeds
 from discord.ext import commands
 import mysql.connector
 from discord.ext.commands import CommandNotFound
@@ -98,5 +99,18 @@ async def send_dm(ctx, member: discord.Member, y=15, *, content):
     while x != y:
         await channel.send(content)
         x += 1
+
+#make vote
+@bot.command()
+async def makevote(ctx, *, text):
+    upvote = bot.get_emoji(856969885129506866)
+    downvote = bot.get_emoji(856969885023207435)
+    embed=discord.Embed(title=f"{ctx.author.name}#{ctx.author.discriminator} started a poll!", description=f"{text}", color=colors.embeds.blue)
+    embed.set_footer(text=f"Bot Version: {const.version}")
+    msg = await ctx.send(embed=embed)
+    await msg.add_reaction(upvote)
+    await msg.add_reaction(downvote)
+    print(f"{ctx.author.name}#{ctx.author.discriminator} used .makevote in {ctx.author.guild.name}@{ctx.channel}\nVote text: {text}")
+
 
 bot.run(config.token)

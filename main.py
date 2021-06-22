@@ -18,6 +18,7 @@ from errors import *
 
 #Try connecting to MySQL
 try:
+    print(f"{colors.yellow}Connecting to MySQL{colors.end}")
     mydb = mysql.connector.connect(
     host=       sql.host,
     user=       sql.user,

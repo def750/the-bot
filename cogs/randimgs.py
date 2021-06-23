@@ -77,6 +77,21 @@ async def ryu(ctx):
 async def extra(ctx):
     extras = [
         "https://tenor.com/view/bart-simpsons-sad-boy-crying-simpsons-gif-14178010",
+        "https://cdn.discordapp.com/attachments/826850315285561365/857255947708923914/unknown.png",
+        "https://cdn.discordapp.com/attachments/826850315285561365/857256549835210752/unknown.png",
+        "https://cdn.discordapp.com/attachments/826850315285561365/857256934909935656/unknown.png",
+        "https://cdn.discordapp.com/attachments/857200460753272832/857258361417629747/unknown.png",
+        "https://cdn.discordapp.com/attachments/857200460753272832/857258419563921408/unknown.png",
+        "https://cdn.discordapp.com/attachments/857200460753272832/857262470048907284/unknown.png",
+        "https://cdn.discordapp.com/attachments/857200460753272832/857262685597990942/unknown.png",
+        "https://cdn.discordapp.com/attachments/857200460753272832/857262933586214942/unknown.png",
+        "https://cdn.discordapp.com/attachments/857200460753272832/857263119196880906/unknown.png",
+        "https://cdn.discordapp.com/attachments/857200460753272832/857263457778663504/unknown.png",
+        "https://cdn.discordapp.com/attachments/857200460753272832/857265321609003028/unknown.png",
+        "https://cdn.discordapp.com/attachments/857200460753272832/857265450421583872/unknown.png",
+        "https://cdn.discordapp.com/attachments/857200460753272832/857265585339629578/unknown.png",
+        "https://cdn.discordapp.com/attachments/857200460753272832/857265975397056522/unknown.png",
+        "https://cdn.discordapp.com/attachments/857200460753272832/857266271183568896/unknown.png",
     ]
     print(f"{ctx.author.name}#{ctx.author.discriminator} issued .extra at {ctx.author.guild.name}")
     await ctx.send(random.choice(extras))

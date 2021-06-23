@@ -21,7 +21,7 @@ def setup(bot):
     bot.add_cog(utoimages(bot))
     bot.add_command(utoimg)
 
-@commands.command(aliases=["utoimge"])
+@commands.command(aliases=["utoimge", "utopic"])
 async def utoimg(ctx):
     web = "https://the-bot.tk/uto/"
     unallowed = [235, 255]

@@ -22,6 +22,7 @@ def setup(bot):
     bot.add_command(zander)
     bot.add_command(bored)
     bot.add_command(ryu)
+    bot.add_command(extra)
 
 @commands.command()
 async def zander(ctx):
@@ -71,3 +72,11 @@ async def ryu(ctx):
     ]
     print(f"{ctx.author.name}#{ctx.author.discriminator} issued .bored at {ctx.author.guild.name}")
     await ctx.send(random.choice(ryus))
+
+@commands.command()
+async def extra(ctx):
+    extras = [
+        "https://tenor.com/view/bart-simpsons-sad-boy-crying-simpsons-gif-14178010",
+    ]
+    print(f"{ctx.author.name}#{ctx.author.discriminator} issued .extra at {ctx.author.guild.name}")
+    await ctx.send(random.choice(extras))

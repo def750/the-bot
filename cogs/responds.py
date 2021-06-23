@@ -25,6 +25,7 @@ def setup(bot):
     bot.add_command(taiwan)
     bot.add_command(tiananmen)
     bot.add_command(americans)
+    bot.add_command(_8ball)
 
 @commands.command()
 async def russia(ctx):
@@ -55,3 +56,38 @@ async def tiananmen(ctx):
 async def americans(ctx):
     print(f"{ctx.author.name}#{ctx.author.discriminator} issued .americans on {ctx.author.guild.name}")
     await ctx.send("Americans 🤢 🇺🇸 -> 🔥")
+
+@commands.command(aliases=["8ball"])
+async def _8ball(ctx, *, q=None):
+    if q == None:
+        return await ctx.send("Correct usage: `,8ball <Question>`")
+    responses = [
+        "Yes",
+        "No",
+        "Maybe",
+        "Are you retarded?",
+        "If you count it",
+	    "Don't count on it",
+        "My reply is no",
+        "My sources say no",
+        "Outlook not so good",
+        "Very doubtful",
+        "Don't count on it",
+        "My reply is no",
+        "My sources say no",
+        "Outlook not so good",
+        "Very doubtful",
+        "As I see it, yes",
+        "It is certain",
+        "It is decidedly so",
+        "Most likely",
+        "Outlook good",
+        "Signs point to yes",
+        "Without a doubt",
+        "Yes",
+        "Yes - definitely",
+        "You may rely on it",
+    ]
+    response = random.choice(responses)
+    await ctx.send(f"**Question:** {q}\n**8ball says**: {response}")
+    print(f"{ctx.author.name}#{ctx.author.discriminator} issued .8ball on {ctx.author.guild.name}\nQuestion was: {q}, answer was {response}")

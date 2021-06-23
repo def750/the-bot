@@ -9,6 +9,7 @@ class colors:
         orange = 0xffa502
         white = 0xffffff
         gray = 0x57606f
+        utoish_blue = 0x9aecdb
     #terminal colors
     end="\033[0m"       # Text Reset
 

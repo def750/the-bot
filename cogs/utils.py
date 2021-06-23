@@ -19,5 +19,13 @@ class utils(commands.Cog):
 
 def setup(bot):
     bot.add_cog(utils(bot))
+    bot.add_command(roll)
 
-
+@commands.command()
+async def roll(ctx, n=100):
+    try:
+        int(n)
+    except:
+        return await ctx.send("N must be a digit")
+    x = random.randrange(1, n)
+    await ctx.send(x)

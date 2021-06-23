@@ -1,2 +1,2 @@
 class const:
-    version = "Unstable shit"
+    version = "1.0.1"

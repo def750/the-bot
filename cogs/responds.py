@@ -62,11 +62,7 @@ async def _8ball(ctx, *, q=None):
     if q == None:
         return await ctx.send("Correct usage: `,8ball <Question>`")
     responses = [
-        "Yes",
-        "No",
-        "Maybe",
         "Are you retarded?",
-        "If you count it",
 	    "Don't count on it",
         "My reply is no",
         "My sources say no",
@@ -90,4 +86,4 @@ async def _8ball(ctx, *, q=None):
     ]
     response = random.choice(responses)
     await ctx.send(f"**Question:** {q}\n**8ball says**: {response}")
-    print(f"{ctx.author.name}#{ctx.author.discriminator} issued .8ball on {ctx.author.guild.name}\nQuestion was: {q}, answer was {response}")
+    print(f"{ctx.author.name}#{ctx.author.discriminator} issued .8ball on {ctx.author.guild.name}\nQuestion was: {colors.yellow}{q}{colors.end}, answer was {colors.yellow}{response}{colors.end}")

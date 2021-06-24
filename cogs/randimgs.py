@@ -23,6 +23,8 @@ def setup(bot):
     bot.add_command(bored)
     bot.add_command(ryu)
     bot.add_command(extra)
+    bot.add_command(shh)
+    bot.add_command(rule1)
 
 @commands.command()
 async def zander(ctx):
@@ -68,7 +70,8 @@ async def ryu(ctx):
         "https://cdn.discordapp.com/attachments/826850315285561365/856852454431129600/Discord_Vgd5QUxyMV-1.png",
         "https://cdn.discordapp.com/attachments/826850315285561365/856852368783179777/unknown-96.png",
         "https://cdn.discordapp.com/attachments/814545127359643708/855318578106728478/Screenshot_20210618_072919.jpg",
-        "https://media.discordapp.net/attachments/826850315285561365/856853246981963786/ryuharam.PNG"
+        "https://media.discordapp.net/attachments/826850315285561365/856853246981963786/ryuharam.PNG",
+        "https://cdn.discordapp.com/attachments/826850315285561365/857537084114075648/unknown.png"
     ]
     print(f"{ctx.author.name}#{ctx.author.discriminator} issued .bored at {ctx.author.guild.name}")
     await ctx.send(random.choice(ryus))
@@ -95,3 +98,13 @@ async def extra(ctx):
     ]
     print(f"{ctx.author.name}#{ctx.author.discriminator} issued .extra at {ctx.author.guild.name}")
     await ctx.send(random.choice(extras))
+
+@commands.command()
+async def shh(ctx):
+    print(f"{ctx.author.name}#{ctx.author.discriminator} issued ,shh at {ctx.author.guild.name}")
+    await ctx.send("https://cdn.discordapp.com/attachments/826850315285561365/857604965614878770/unknown-1.png")
+
+@commands.command()
+async def rule1(ctx):
+    print(f"{ctx.author.name}#{ctx.author.discriminator} issued ,rule1 at {ctx.author.guild.name}")
+    await ctx.send("https://tenor.com/view/no-genshin-impact-discord-rules-gif-20700280")

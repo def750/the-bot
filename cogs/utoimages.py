@@ -21,10 +21,10 @@ def setup(bot):
     bot.add_cog(utoimages(bot))
     bot.add_command(utoimg)
 
-@commands.command(aliases=["utoimge", "utopic"])
+@commands.command(aliases=["utoimage", "utopic"])
 async def utoimg(ctx):
     web = "https://the-bot.tk/uto/"
-    unallowed = [235, 255]
+    unallowed = [235, 255, 336, 311, 272, 71]
     x = random.randrange(0, 385)
     if int(x) in unallowed:
         x = 1

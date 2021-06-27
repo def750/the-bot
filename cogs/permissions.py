@@ -33,70 +33,59 @@ def setup(bot):
 
 @commands.command()
 async def checkperms(ctx, user : discord.Member=None):
-    author = ctx.author
-    server = ctx.guild
-    print(f"{ctx.author.name}#{ctx.author.discriminator} issued ,checkperms on {ctx.author.guild.name}")
+    #If user not sepecified set it to command author
     if user == None:
-        c.execute("SELECT * FROM users WHERE user_id=%s AND server_id=%s", (author.id, server.id))
-        res = c.fetchone()
-        if not res:
-            if str(author.id) in config.bot_owners:
-                embed=discord.Embed(title=f"{author.name}#{author.discriminator}'s Permssions", description=f"**Permision level in DB:** 0\n**Group Name:** User\nYou're also Bot owner (Perm Level: 3)", color=author.colour)
-                embed.set_thumbnail(url=f"{author.avatar_url}")
-                embed.set_footer(text=f"Bot Version: {const.version}")
-                return await ctx.send(embed=embed)
-            embed=discord.Embed(title=f"{author.name}#{author.discriminator}'s Permssions", description=f"**Permision level:** 0\n**Group Name:** User", color=author.colour)
-            embed.set_thumbnail(url=f"{author.avatar_url}")
-            embed.set_footer(text=f"Bot Version: {const.version}")
-            await ctx.send(embed=embed)   
-        else:
-            group = int(res[3])
-            if group == 2:
-                n_group = "Admin"
-            elif group == 1:
-                n_group = "Ascended"
-            elif group == 0:
-                n_group = "User"
-            if str(author.id) in config.bot_owners:
-                embed=discord.Embed(title=f"{author.name}#{author.discriminator}'s Permssions", description=f"**Permision level in DB:** {res[3]}\n**Group Name:** {n_group}\nYou're also Bot owner (Perm Level: 3)", color=author.colour)
-                embed.set_thumbnail(url=f"{author.avatar_url}")
-                embed.set_footer(text=f"Bot Version: {const.version}")
-                return await ctx.send(embed=embed)
-            embed=discord.Embed(title=f"{author.name}#{author.discriminator}'s Permssions", description=f"**Permision level:** {res[3]}\n**Group Name:** {n_group}", color=author.colour)
-            embed.set_thumbnail(url=f"{author.avatar_url}")
-            embed.set_footer(text=f"Bot Version: {const.version}")
-            await ctx.send(embed=embed)
+        user = ctx.author
+        other = False
     else:
-        c.execute("SELECT * FROM users WHERE user_id=%s AND server_id=%s", (user.id, server.id))
-        res = c.fetchone()
-        if not res:
-            if str(user.id) in config.bot_owners:
-                embed=discord.Embed(title=f"{user.name}#{user.discriminator}'s Permssionsl", description=f"**Permision level in DB:** 0\n**Group Name:** User\nThis user is also Bot owner (Perm Level: 3)", color=author.colour)
-                embed.set_thumbnail(url=f"{user.avatar_url}")
-                embed.set_footer(text=f"Bot Version: {const.version}")
-                return await ctx.send(embed=embed)
-            embed=discord.Embed(title=f"{user.name}#{user.discriminator}'s Permssions", description=f"**Permision level:** 0\n**Group Name:** User", color=user.colour)
-            embed.set_thumbnail(url=f"{user.avatar_url}")
-            embed.set_footer(text=f"Bot Version: {const.version}")
-            await ctx.send(embed=embed)   
-        else:
-            group = int(res[3])
-            if group == 2:
-                n_group = "Admin"
-            elif group == 1:
-                n_group = "Ascended"
-            elif group == 0:
-                n_group = "User"
-            if str(user.id) in config.bot_owners:
-                embed=discord.Embed(title=f"{user.name}#{user.discriminator}'s Permssions", description=f"**Permision level in DB:** {res[3]}\n**Group Name:** {n_group}\nThis user is also Bot owner (Perm Level: 3)", color=user.colour)
-                embed.set_thumbnail(url=f"{user.avatar_url}")
-                embed.set_footer(text=f"Bot Version: {const.version}")
-                return await ctx.send(embed=embed)
-            embed=discord.Embed(title=f"{user.name}#{user.discriminator}'s Permssions", description=f"**Permision level:** {res[3]}\n**Group Name:** {n_group}", color=user.colour)
-            embed.set_thumbnail(url=f"{user.avatar_url}")
-            embed.set_footer(text=f"Bot Version: {const.version}")
-            await ctx.send(embed=embed)
+        other = True
+
+    #Sql
+    c.execute(f"SELECT id, group_id FROM users WHERE user_id={user.id} AND server_id={ctx.guild.id}")
+    res = c.fetchone()
+
+    #Check if in database
+    if not res:
+        weight = 0
+        group_id = 0
+        group_name = "User"
+        db_id = "Not in DB"
+    else: 
+        c.execute(f"SELECT * FROM permission_table WHERE group_id={res[1]}")
+        grp = c.fetchone()
+        group_id = grp[0]
+        group_name = grp[1]
+        weight = grp[2]
+        db_id = res[0]
+
+    ##########Embed Strings############
+    db_group_id = f"**Group ID:** {group_id}\n"
+    db_group_name = f"**Group Name:** {group_name}\n"
+    db_permission_level = f"**Permission level:** {weight}\n"
+
+        #Check if user was specified or not again
+    if other == True:
+        pron = "This user is also"
+    else:
+        pron = "You're also"
     
+        #Check if command author is bot owner (additional info)
+    if str(ctx.author.id) in config.bot_owners:
+        display_id = f"**Entry ID:** {db_id}\n"
+    else:
+        display_id = ""
+    
+    if str(user.id) in config.bot_owners:
+        q_bot_owner = f"\n{pron} Bot Owner (**Permission level:** {config.bot_owners_weight})"
+    else:
+        q_bot_owner = ""
+        
+    #Embed Embed
+    embed=discord.Embed(title=f"{user.name}#{user.discriminator}'s Permssions", description=f"{db_group_name}{db_group_id}{db_permission_level}{display_id}{q_bot_owner}", color=user.colour)
+    embed.set_thumbnail(url=f"{user.avatar_url}")
+    embed.set_footer(text=f"Bot Version: {const.version}")
+    await ctx.send(embed=embed)
+
 @commands.command()
 async def setperms(ctx, user : discord.Member=None, level=0):
     if str(ctx.author.id) not in config.bot_owners:
@@ -136,6 +125,7 @@ async def setperms(ctx, user : discord.Member=None, level=0):
     #Check if in database
     if not res:
         prev_level = 0
+        p_weight = 0
         user_tag = f"{ctx.author.name}#{ctx.author.discriminator}"
 
         ###LOG MESSAGE###
@@ -151,8 +141,13 @@ async def setperms(ctx, user : discord.Member=None, level=0):
         c.execute(sql, val)
         mydb.commit()
 
+
+        c.execute(f"SELECT weight FROM permission_table WHERE group_id={level}")
+        w = c.fetchone()
+        weight = w[0]
+
         #embed
-        embed=discord.Embed(title=f"Changed {user.name}#{user.discriminator}'s permissions", description=f"**Previous level:** {prev_level}\n**New Level:** {level}\n**Group Name:** {n_group}", color=user.colour)
+        embed=discord.Embed(title=f"Changed {user.name}#{user.discriminator}'s permissions", description=f"**Previous level:** {prev_level} ({p_weight})\n**New Level:** {level} ({weight})\n**Group Name:** {n_group}", color=user.colour)
         embed.set_thumbnail(url=f"{user.avatar_url}")
         embed.set_footer(text=f"Bot Version: {const.version}")
         ###CONSOLE LOG NOTICE
@@ -160,20 +155,26 @@ async def setperms(ctx, user : discord.Member=None, level=0):
         print(f"Permission change")
         print(f"{y}Executed By: {e}{ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})")
         print(f"{y}User affected: {e}{user.name}#{user.discriminator} ({user.id})")
-        print(f"{y}Previous Group: {e}{prev_level}")
-        print(f"{y}New Group: {e}{level}")
+        print(f"{y}Previous Group: {e}{prev_level} ({p_weight})")
+        print(f"{y}New Group: {e}{level} ({weight})")
         print(f"{y}Server: {e}{ctx.guild.name} ({ctx.guild.id})")
         print(f"{colors.red}This event was also logged to database!{e}\n")
         return await ctx.send(embed=embed)
     else:
         #Previous level
         prev_level = res[3]
+        c.execute(f"SELECT weight FROM permission_table WHERE group_id={res[3]}")
+        w = c.fetchone()
+        p_weight = w[0]
         #User Tag
         user_tag = f"{ctx.author.name}#{ctx.author.discriminator}"
 
+        c.execute(f"SELECT weight FROM permission_table WHERE group_id={level}")
+        w = c.fetchone()
+        weight = w[0]
         
         ###LOG MESSAGE###
-        log_msg = f"Changed permission level of <{user.name}#{user.discriminator} ({user.id})> from {prev_level} to {level}"
+        log_msg = f"Changed permission level of <{user.name}#{user.discriminator} ({user.id})> from {prev_level} ({p_weight}) to {level} ({weight})"
         ###LOG MESSAGE###
 
         #SQL
@@ -183,8 +184,9 @@ async def setperms(ctx, user : discord.Member=None, level=0):
         c.execute(sql, val)
         mydb.commit()
 
+
         #Embed
-        embed=discord.Embed(title=f"Changed {user.name}#{user.discriminator}'s permissions", description=f"**Previous level:** {prev_level}\n**New Level:** {level}\n**Group Name:** {n_group}", color=user.colour)
+        embed=discord.Embed(title=f"Changed {user.name}#{user.discriminator}'s permissions", description=f"**Previous level:** {prev_level} ({p_weight})\n**New Level:** {level} ({weight})\n**Group Name:** {n_group}", color=user.colour)
         embed.set_thumbnail(url=f"{user.avatar_url}")
         embed.set_footer(text=f"Bot Version: {const.version}")
         ###CONSOLE LOG NOTICE
@@ -192,8 +194,13 @@ async def setperms(ctx, user : discord.Member=None, level=0):
         print(f"Permission change")
         print(f"{y}Executed By: {e}{ctx.author.name}#{ctx.author.discriminator} ({ctx.author.id})")
         print(f"{y}User affected: {e}{user.name}#{user.discriminator} ({user.id})")
-        print(f"{y}Previous Group: {e}{prev_level}")
-        print(f"{y}New Group: {e}{level}")
+        print(f"{y}Previous Group: {e}{prev_level} ({p_weight})")
+        print(f"{y}New Group: {e}{level} ({weight})")
         print(f"{y}Server: {e}{ctx.guild.name} ({ctx.guild.id})")
         print(f"{colors.red}This event was also logged to the database!{e}\n")
         return await ctx.send(embed=embed)
+
+@commands.command()
+async def creategroup(ctx, name, weight):
+    if str(ctx.author.id) not in config.bot_owners:
+        return await ctx.send("You must be bot owner to do that")

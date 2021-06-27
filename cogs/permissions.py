@@ -30,6 +30,7 @@ def setup(bot):
     bot.add_cog(permissions(bot))
     bot.add_command(checkperms)
     bot.add_command(setperms)
+    bot.add_command(creategroup)
 
 @commands.command()
 async def checkperms(ctx, user : discord.Member=None):
@@ -116,12 +117,12 @@ async def setperms(ctx, user : discord.Member=None, level=0):
         return await ctx.send("You can't change your own perms")
 
     #Assign group name    
-    if level == 2:
-        n_group = "Admin"
-    elif level == 1:
-        n_group = "Ascended"
-    elif level == 0:
+    c.execute(f"SELECT group_name FROM permission_table WHERE group_id={level}")
+    res3 = c.fetchone()
+    if not res3:
         n_group = "User"
+    else:
+        n_group = res3[0]
 
     y = colors.yellow
     e = colors.end
@@ -209,6 +210,63 @@ async def setperms(ctx, user : discord.Member=None, level=0):
         return await ctx.send(embed=embed)
 
 @commands.command()
-async def creategroup(ctx, name, weight):
+async def creategroup(ctx, name=None, weight=0):
+    y = colors.yellow
+    e = colors.end
     if str(ctx.author.id) not in config.bot_owners:
         return await ctx.send("You must be bot owner to do that")
+
+    if name == None:
+        return await ctx.send("Invalid sintax, help WIP")
+
+    unallowed_names = ["bot_owner", "bot"]
+    #convert name to lowercase
+    name = name.lower()
+
+    #Syntax checks
+    try:
+        weight = int(weight)
+    except:
+        return await ctx.send("Weight must be a number")
+    if weight > 1000 or weight < 0:
+        return await ctx.send("Weight must be higher than 0 and smaller than 1000")
+    
+    #Check if group with that name already exists
+    c.execute(f"SELECT `group_name` FROM `permission_table` WHERE `group_name` = '{name}'")
+    res2 = c.fetchone()
+    if res2:
+        return await ctx.send("Group with that name already exists")
+        
+
+    #Check if name is unallowed
+    if name in unallowed_names:
+        return await ctx.send("This name is not allowed, choose other one")
+    
+    ####Command code
+    sql = "INSERT INTO permission_table (group_name, weight) VALUES (%s, %s)"
+    val = (name, weight)
+    c.execute(sql, val)
+    mydb.commit()
+    c.execute("SELECT group_id FROM permission_table WHERE group_name=%s", (name,))
+    res1 = c.fetchone()
+    grp_id = res1[0]
+    ###CONSOLE LOG NOTICE
+    user_tag = f"{ctx.author.name}#{ctx.author.discriminator}"
+    print(f"\n{colors.red}-----[ IMPORTANT NOTICE ]-----")
+    print(f"Created Group")
+    print(f"{y}Executed By: {e}{user_tag} ({ctx.author.id})")
+    print(f"{y}New Group: {e}{name} ({weight})")
+    print(f"{y}Group ID: {e}{grp_id}")
+    print(f"{y}Server of Execution: {e}{ctx.guild.name} ({ctx.guild.id})")
+    print(f"{colors.red}This event was also logged to the database!{e}\n")
+    log_msg = f"<{user_tag} ({ctx.author.id}> Created new group {name} (ID: {grp_id}) with weight {weight}"
+    sql = "INSERT INTO logs (user_id, user_tag, server_id, log) VALUES (%s, %s, %s, %s)"
+    val = (ctx.author.id, user_tag, ctx.guild.id, log_msg)
+    c.execute(sql, val)
+    mydb.commit()
+    embed=discord.Embed(title=f"Group created", description=f"**Group name:** {name}\n**Group Weight:** {weight}\n**Group ID:** {grp_id}\n\n__**This event was logged to the database!**__", color=colors.embeds.green)
+    embed.set_footer(text=f"Bot Version: {const.version}")
+    return await ctx.send(embed=embed)
+@commands.command()
+async def checkgroup(ctx, group):
+    return

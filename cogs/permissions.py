@@ -58,28 +58,28 @@ async def checkperms(ctx, user : discord.Member=None):
         weight = grp[2]
         db_id = res[0]
 
-    ##########Embed Strings############
+    #Embed Strings#
     db_group_id = f"**Group ID:** {group_id}\n"
     db_group_name = f"**Group Name:** {group_name}\n"
     db_permission_level = f"**Permission level:** {weight}\n"
 
-        #Check if user was specified or not again
+    #Check if user was specified or not again
     if other == True:
         pron = "This user is also"
     else:
         pron = "You're also"
-    
-        #Check if command author is bot owner (additional info)
+
+    #Check if command author is bot owner (additional info)
     if str(ctx.author.id) in config.bot_owners:
         display_id = f"**Entry ID:** {db_id}\n"
     else:
         display_id = ""
-    
+
     if str(user.id) in config.bot_owners:
         q_bot_owner = f"\n{pron} Bot Owner (**Permission level:** {config.bot_owners_weight})"
     else:
         q_bot_owner = ""
-        
+
     #Embed Embed
     embed=discord.Embed(title=f"{user.name}#{user.discriminator}'s Permssions", description=f"{db_group_name}{db_group_id}{db_permission_level}{display_id}{q_bot_owner}", color=user.colour)
     embed.set_thumbnail(url=f"{user.avatar_url}")
@@ -100,9 +100,17 @@ async def setperms(ctx, user : discord.Member=None, level=0):
         level = int(level)
     except:
         return await ctx.send("Permission level argument must be a digit")
-    if level > 2 or level < 0:
-        return await ctx.send("Level must be in range of 0-2")
+
+    #Check if level is 3 (Bot owner which is hard coded)
+    if level == 3:
+        return await ctx.send(f"This group id is reserved and unsettable, if you want someone added here ask def750")
     
+    #Check if group exist
+    c.execute(f"SELECT group_id FROM permission_table WHERE group_id={level}")
+    res1 = c.fetchone()
+    if not res1:
+        return await ctx.send(f"Group with id {level} does not exist!")
+
     #Check if user tries to change his own perms
     if str(user.id) == str(ctx.author.id):
         return await ctx.send("You can't change your own perms")
